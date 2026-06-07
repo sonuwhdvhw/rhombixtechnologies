@@ -114,7 +114,7 @@ body {
     radial-gradient(ellipse at 60% 80%, rgba(167,139,250,0.08) 0%, transparent 50%);
   background-size: 100% 100%;
   background-attachment: fixed;
-  animation: meshMove 20s ease infinite, pageFadeIn 0.6s ease forwards;
+  /* NO animation on body — transform breaks position:fixed */
 }
 
 [data-theme="light"] body {
@@ -124,10 +124,13 @@ body {
     radial-gradient(ellipse at 60% 80%, rgba(167,139,250,0.05) 0%, transparent 50%);
 }
 
-/* Page fade-in on load */
+/* Page fade-in — on #root, NOT body (body transform breaks position:fixed) */
+#root {
+  animation: pageFadeIn 0.5s ease forwards;
+}
 @keyframes pageFadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 @keyframes meshMove {
@@ -914,20 +917,26 @@ section {
 /* Rotating gradient border ring */
 .hero-rotate-ring {
   position: absolute;
-  inset: -14px;
-  border-radius: 32px;
+  inset: -12px;
+  border-radius: 30px;
+  padding: 3px;
   background: conic-gradient(
     from 0deg,
     transparent 0deg,
-    #818cf8 60deg,
-    #c4b5fd 120deg,
-    #ffffff 180deg,
-    #c4b5fd 240deg,
-    #818cf8 300deg,
+    #818cf8 80deg,
+    #c4b5fd 160deg,
+    #818cf8 240deg,
+    transparent 320deg,
     transparent 360deg
   );
   animation: borderSpin 3s linear infinite;
   z-index: 0;
+  /* Mask so only border shows, not the fill */
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
 }
 @keyframes borderSpin {
   from { transform: rotate(0deg); }
