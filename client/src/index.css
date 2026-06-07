@@ -699,33 +699,11 @@ section {
   overflow: hidden;
 }
 
-/* Ambient orbs */
-.hero-orb {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-  animation: orbFloat var(--dur, 20s) ease-in-out infinite alternate;
-  filter: blur(60px);
-}
-@keyframes orbFloat {
-  0%   { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(30px, -40px) scale(1.12); }
-}
+/* Ambient orbs — removed */
+.hero-orb { display: none !important; }
 
-/* Animated grid overlay */
-.hero-grid-overlay {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(129,140,248,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(129,140,248,0.04) 1px, transparent 1px);
-  background-size: 80px 80px;
-  pointer-events: none;
-  z-index: 0;
-  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
-}
+/* Grid overlay — removed */
+.hero-grid-overlay { display: none !important; }
 
 /* Main container */
 .hero-container {
@@ -2143,26 +2121,28 @@ footer {
 
 /* ── Top Navbar ─────────────────────────────────────────────── */
 .topnav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 1002;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0;
+  right: 0;
+  z-index: 9999 !important;
   height: 64px;
   padding: 0 32px;
   display: flex;
   align-items: center;
-  background: rgba(8,8,18,0.92);
+  background: rgba(8,8,18,0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(129,140,248,0.15);
-  transition: box-shadow 0.3s ease, background 0.3s ease;
-  /* Always stay visible — no transform hide */
-  transform: translateY(0) !important;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  transform: none !important;
   visibility: visible !important;
   opacity: 1 !important;
+  will-change: auto;
 }
 .topnav--scrolled {
-  background: rgba(8,8,18,0.97);
-  box-shadow: 0 4px 32px rgba(0,0,0,0.4);
+  background: rgba(8,8,18,0.98);
+  box-shadow: 0 4px 32px rgba(0,0,0,0.5);
   border-bottom-color: rgba(129,140,248,0.25);
 }
 [data-theme="light"] .topnav {

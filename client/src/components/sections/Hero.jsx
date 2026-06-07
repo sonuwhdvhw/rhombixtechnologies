@@ -15,32 +15,11 @@ const buildSeq = (roles) => {
   return s;
 };
 
-/* Subtle grid dots for background depth */
-const ORBS = [
-  { w:500, h:500, top:'-10%', left:'-5%',  dur:'20s', op:0.07, color:'#818cf8' },
-  { w:400, h:400, top:'50%',  left:'60%',  dur:'25s', op:0.05, color:'#c4b5fd' },
-  { w:300, h:300, top:'70%',  left:'10%',  dur:'18s', op:0.06, color:'#818cf8' },
-];
-
 const Hero = () => {
   const waLink = `https://wa.me/${aboutData.whatsapp}?text=Hello%2C%20I%20found%20you%20through%20your%20portfolio!`;
 
   return (
     <section id="home" className="hero-section">
-
-      {/* Ambient orbs */}
-      {ORBS.map((o, i) => (
-        <div key={i} className="hero-orb" aria-hidden="true" style={{
-          width: o.w, height: o.h,
-          top: o.top, left: o.left,
-          opacity: o.op,
-          background: `radial-gradient(circle, ${o.color}, transparent 70%)`,
-          '--dur': o.dur,
-        }} />
-      ))}
-
-      {/* Animated grid lines */}
-      <div className="hero-grid-overlay" aria-hidden="true" />
 
       <div className="hero-container">
 
