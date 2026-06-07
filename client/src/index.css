@@ -704,8 +704,8 @@ section {
   margin: 0 auto;
   padding: 0 40px;
   display: grid;
-  grid-template-columns: 1fr 420px;
-  gap: 80px;
+  grid-template-columns: 1fr 460px;
+  gap: 60px;
   align-items: center;
   width: 100%;
   position: relative;
@@ -727,10 +727,10 @@ section {
 /* Hero name */
 .hero-name {
   font-family: var(--font-display);
-  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-size: clamp(3.8rem, 8vw, 7rem);
   letter-spacing: 4px;
-  line-height: 0.95;
-  margin-bottom: 16px;
+  line-height: 0.92;
+  margin-bottom: 20px;
   text-transform: uppercase;
   color: #ffffff;
   font-weight: 800;
@@ -829,7 +829,8 @@ section {
 
 .hero-photo-wrapper {
   position: relative;
-  width: 320px;
+  width: 380px;
+  perspective: 1000px;
 }
 
 .hero-photo-frame {
@@ -838,21 +839,25 @@ section {
   overflow: hidden;
   background: var(--glass-bg);
   backdrop-filter: blur(16px);
-  /* Gradient border via box-shadow */
   box-shadow:
-    0 0 0 2px rgba(129,140,248,0.6),
-    0 0 0 6px rgba(129,140,248,0.12),
-    0 32px 80px rgba(0,0,0,0.45),
-    0 0 60px rgba(129,140,248,0.2);
-  transition: box-shadow 0.4s ease, transform 0.4s ease;
+    0 0 0 2px rgba(129,140,248,0.7),
+    0 0 0 8px rgba(129,140,248,0.1),
+    0 40px 100px rgba(0,0,0,0.55),
+    0 0 80px rgba(129,140,248,0.25),
+    8px 16px 40px rgba(0,0,0,0.5),
+    -4px -4px 20px rgba(129,140,248,0.08);
+  transform: rotateY(-8deg) rotateX(4deg);
+  transition: box-shadow 0.4s ease, transform 0.5s ease;
   will-change: transform;
 }
 .hero-photo-frame:hover {
+  transform: rotateY(0deg) rotateX(0deg) scale(1.03);
   box-shadow:
-    0 0 0 2px rgba(196,181,253,0.8),
-    0 0 0 8px rgba(129,140,248,0.15),
-    0 40px 100px rgba(0,0,0,0.5),
-    0 0 80px rgba(129,140,248,0.35);
+    0 0 0 2px rgba(196,181,253,0.9),
+    0 0 0 10px rgba(129,140,248,0.15),
+    0 50px 120px rgba(0,0,0,0.6),
+    0 0 100px rgba(129,140,248,0.4),
+    0 20px 60px rgba(0,0,0,0.4);
 }
 
 /* Animated glow ring behind frame */

@@ -47,17 +47,6 @@ const Hero = () => {
       <div className="hero-container">
         {/* Text Column */}
         <div className="hero-text-col">
-          <motion.div
-            className="hero-terminal-line"
-            initial={{ opacity:0, x:-20 }}
-            animate={{ opacity:1, x:0 }}
-            transition={{ duration:0.5, delay:0.1 }}
-          >
-            <span className="prompt">~/dev</span>
-            <span style={{color:'var(--text-3)'}}>$</span>
-            <span>whoami</span>
-            <span className="cursor" aria-hidden="true" />
-          </motion.div>
 
           {/* Name */}
           <motion.h1
@@ -65,7 +54,7 @@ const Hero = () => {
             data-text={aboutData.name.toUpperCase()}
             initial={{ opacity:0, y:-50 }}
             animate={{ opacity:1, y:0 }}
-            transition={{ duration:0.9, delay:0.3, ease:[0.22,1,0.36,1] }}
+            transition={{ duration:0.9, delay:0.2, ease:[0.22,1,0.36,1] }}
           >
             {aboutData.name.split(' ').map((part, i) => (
               <span key={i}>
@@ -167,11 +156,11 @@ const Hero = () => {
           transition={{ duration:1.1, delay:0.3, ease:[0.22,1,0.36,1] }}
         >
           <div className="hero-photo-wrapper">
-            {/* Professional frame */}
+            {/* Professional 3D frame */}
             <motion.div
               className="hero-photo-frame"
-              whileHover={{ scale:1.03 }}
-              transition={{ type:'spring', stiffness:180, damping:18 }}
+              whileHover={{ rotateY: 0, rotateX: 0, scale: 1.03 }}
+              transition={{ type:'spring', stiffness:150, damping:20 }}
             >
               {/* Glow ring */}
               <div className="hero-photo-glow" aria-hidden="true" />
