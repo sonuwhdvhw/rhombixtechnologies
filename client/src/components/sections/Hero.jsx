@@ -2,8 +2,8 @@
  * Hero — World-class developer landing page
  * Clean name (no glitch), animated floating frame, mobile optimized
  */
-import React, { useEffect, useRef } from 'react';
-import { motion, useAnimation, useMotionValue, useTransform } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { TypeAnimation } from 'react-type-animation';
 import { FiGithub, FiLinkedin, FiMail, FiArrowDown } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
@@ -24,22 +24,6 @@ const ORBS = [
 
 const Hero = () => {
   const waLink = `https://wa.me/${aboutData.whatsapp}?text=Hello%2C%20I%20found%20you%20through%20your%20portfolio!`;
-
-  /* Mouse parallax for photo */
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const rotateX = useTransform(mouseY, [-300, 300], [12, -12]);
-  const rotateY = useTransform(mouseX, [-300, 300], [-12, 12]);
-
-  const handleMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    mouseX.set(e.clientX - rect.left - rect.width / 2);
-    mouseY.set(e.clientY - rect.top - rect.height / 2);
-  };
-  const handleMouseLeave = () => {
-    mouseX.set(0);
-    mouseY.set(0);
-  };
 
   return (
     <section id="home" className="hero-section">
@@ -188,36 +172,27 @@ const Hero = () => {
           </motion.div>
         </div>
 
-        {/* ── RIGHT: Photo with animated floating frame ── */}
+        {/* ── RIGHT: Photo with rotating border frame ── */}
         <motion.div
           className="hero-photo-col"
           initial={{ opacity:0, x:80 }}
           animate={{ opacity:1, x:0 }}
           transition={{ duration:1.1, delay:0.3, ease:[0.22,1,0.36,1] }}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-          style={{ perspective: 1200 }}
         >
           <div className="hero-photo-scene">
 
-            {/* Rotating ring decoration */}
-            <div className="hero-ring hero-ring--outer" aria-hidden="true" />
-            <div className="hero-ring hero-ring--inner" aria-hidden="true" />
+            {/* Rotating gradient border ring */}
+            <div className="hero-rotate-ring" aria-hidden="true" />
 
-            {/* Floating corner accents */}
+            {/* Static outer glow ring */}
+            <div className="hero-glow-ring" aria-hidden="true" />
+
+            {/* Corner accents */}
             <div className="hero-corner hero-corner--tl" aria-hidden="true" />
             <div className="hero-corner hero-corner--br" aria-hidden="true" />
 
-            {/* The actual photo card — mouse tilt */}
-            <motion.div
-              className="hero-photo-card"
-              style={{ rotateX, rotateY }}
-              transition={{ type:'spring', stiffness:120, damping:20 }}
-            >
-              {/* Gradient border shimmer */}
-              <div className="hero-photo-shimmer" aria-hidden="true" />
-
-              {/* Photo */}
+            {/* Photo card — clean, no overlay */}
+            <div className="hero-photo-card">
               <img
                 src="/profile/photo.jpg"
                 alt={`${aboutData.name} — ${aboutData.title}`}
@@ -232,13 +207,12 @@ const Hero = () => {
                   card.appendChild(ph);
                 }}
               />
-
-              {/* Bottom badge overlay */}
+              {/* Name badge at bottom */}
               <div className="hero-photo-overlay">
                 <span className="hero-photo-overlay__name">{aboutData.name}</span>
                 <span className="hero-photo-overlay__role">{aboutData.title}</span>
               </div>
-            </motion.div>
+            </div>
 
             {/* Floating "Open to Work" pill */}
             <motion.div
