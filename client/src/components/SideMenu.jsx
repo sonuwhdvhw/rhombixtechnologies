@@ -1,6 +1,7 @@
 /**
  * Navigation — Top navbar always visible + full-screen menu overlay
  * Professional side-panel style with numbered links
+ * Hash-based navigation — URL changes to #section on click & on load
  */
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,13 +23,35 @@ const NAV_ITEMS = [
 const SideMenu = () => {
   const [open, setOpen]         = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [active, setActive]     = useState('home');
   const { theme, toggleTheme }  = useTheme();
 
-  // Navbar shadow on scroll
+  // Navbar shadow on scroll + active section tracker
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 20);
+
+      // Find which section is currently in view
+      const offsets = NAV_ITEMS.map(item => {
+        const el = document.getElementById(item.id);
+        if (!el) return { id: item.id, top: Infinity };
+        return { id: item.id, top: Math.abs(el.getBoundingClientRect().top - 80) };
+      });
+      const closest = offsets.reduce((a, b) => a.top < b.top ? a : b);
+      setActive(closest.id);
+    };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // On load — if URL has a hash, scroll to that section
+  useEffect(() => {
+    const hash = window.location.hash?.replace('#', '');
+    if (hash) {
+      setTimeout(() => {
+        document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' });
+      }, 500);
+    }
   }, []);
 
   // Close on Escape
@@ -38,7 +61,7 @@ const SideMenu = () => {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  // Lock body scroll
+  // Lock body scroll when menu open
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
@@ -46,6 +69,9 @@ const SideMenu = () => {
 
   const scrollTo = useCallback((id) => {
     setOpen(false);
+    setActive(id);
+    // Update URL hash without page reload
+    window.history.pushState(null, '', `#${id}`);
     setTimeout(() => {
       document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     }, 300);
@@ -67,7 +93,7 @@ const SideMenu = () => {
             {NAV_ITEMS.slice(0, 5).map((item) => (
               <button
                 key={item.id}
-                className="topnav__link"
+                className={`topnav__link ${active === item.id ? 'topnav__link--active' : ''}`}
                 onClick={() => scrollTo(item.id)}
               >
                 {item.label}
@@ -141,7 +167,7 @@ const SideMenu = () => {
                 {NAV_ITEMS.map((item, i) => (
                   <motion.button
                     key={item.id}
-                    className="menu-panel__item"
+                    className={`menu-panel__item ${active === item.id ? 'menu-panel__item--active' : ''}`}
                     onClick={() => scrollTo(item.id)}
                     initial={{ opacity: 0, x: 30 }}
                     animate={{ opacity: 1, x: 0 }}

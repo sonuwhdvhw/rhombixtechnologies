@@ -28,6 +28,24 @@ const TECH_ICONS = {
 
 const ProjectCard = ({ project, index, inView }) => {
   const isEven = index % 2 === 0;
+  const iframeWrapRef = useRef(null);
+  const [iframeScale, setIframeScale] = useState(0.5);
+
+  // Calculate exact scale so iframe fills the wrapper perfectly
+  React.useEffect(() => {
+    const updateScale = () => {
+      if (!iframeWrapRef.current) return;
+      const wrapperWidth = iframeWrapRef.current.offsetWidth;
+      const scale = wrapperWidth / 1280;
+      setIframeScale(scale);
+      // Also set iframe height to fill wrapper (16:9)
+      iframeWrapRef.current.style.height = `${wrapperWidth * (9/16)}px`;
+    };
+    updateScale();
+    const ro = new ResizeObserver(updateScale);
+    if (iframeWrapRef.current) ro.observe(iframeWrapRef.current);
+    return () => ro.disconnect();
+  }, []);
 
   return (
     <motion.article
@@ -58,7 +76,7 @@ const ProjectCard = ({ project, index, inView }) => {
         {/* Screenshot */}
         <div className="proj-showcase__img-wrap">
           {/* Live iframe — shows actual website */}
-          <div className="proj-showcase__iframe-wrap">
+          <div className="proj-showcase__iframe-wrap" ref={iframeWrapRef}>
             <iframe
               src={project.liveUrl}
               title={`${project.title} preview`}
@@ -66,6 +84,7 @@ const ProjectCard = ({ project, index, inView }) => {
               loading="lazy"
               scrolling="no"
               tabIndex="-1"
+              style={{ transform: `scale(${iframeScale})` }}
             />
           </div>
 
