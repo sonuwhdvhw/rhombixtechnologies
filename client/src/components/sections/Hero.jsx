@@ -1,212 +1,285 @@
 /**
- * Hero — floating particles, advanced animations, section watermark
+ * Hero — World-class developer landing page
+ * Clean name (no glitch), animated floating frame, mobile optimized
  */
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef } from 'react';
+import { motion, useAnimation, useMotionValue, useTransform } from 'framer-motion';
 import { TypeAnimation } from 'react-type-animation';
-import { FiGithub, FiLinkedin, FiMail, FiFileText } from 'react-icons/fi';
+import { FiGithub, FiLinkedin, FiMail, FiArrowDown } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import { aboutData } from '../../data/portfolioData';
 
 const buildSeq = (roles) => {
   const s = [];
-  roles.forEach(r => { s.push(r); s.push(2200); });
+  roles.forEach(r => { s.push(r); s.push(2000); });
   return s;
 };
 
-/* Floating CSS particles */
-const PARTICLES = [
-  { w:300,h:300, top:'10%', left:'5%',   dur:'18s', tx:'40px',  ty:'-50px', op:0.06 },
-  { w:250,h:250, top:'60%', left:'60%',  dur:'22s', tx:'-30px', ty:'40px',  op:0.05 },
-  { w:400,h:400, top:'30%', left:'70%',  dur:'25s', tx:'25px',  ty:'-35px', op:0.04 },
-  { w:180,h:180, top:'80%', left:'20%',  dur:'16s', tx:'35px',  ty:'30px',  op:0.07 },
-  { w:320,h:320, top:'15%', left:'40%',  dur:'20s', tx:'-40px', ty:'45px',  op:0.04 },
-  { w:220,h:220, top:'50%', left:'-5%',  dur:'24s', tx:'50px',  ty:'-20px', op:0.05 },
+/* Subtle grid dots for background depth */
+const ORBS = [
+  { w:500, h:500, top:'-10%', left:'-5%',  dur:'20s', op:0.07, color:'#818cf8' },
+  { w:400, h:400, top:'50%',  left:'60%',  dur:'25s', op:0.05, color:'#c4b5fd' },
+  { w:300, h:300, top:'70%',  left:'10%',  dur:'18s', op:0.06, color:'#818cf8' },
 ];
 
 const Hero = () => {
   const waLink = `https://wa.me/${aboutData.whatsapp}?text=Hello%2C%20I%20found%20you%20through%20your%20portfolio!`;
 
-  return (
-    <section id="home">
-      {/* Section watermark */}
-      <span className="section-num" aria-hidden="true">01</span>
+  /* Mouse parallax for photo */
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const rotateX = useTransform(mouseY, [-300, 300], [12, -12]);
+  const rotateY = useTransform(mouseX, [-300, 300], [-12, 12]);
 
-      {/* Floating particles */}
-      {PARTICLES.map((p, i) => (
-        <div key={i} className="hero-particle" aria-hidden="true" style={{
-          width: p.w, height: p.h,
-          top: p.top, left: p.left,
-          opacity: p.op,
-          '--dur': p.dur,
-          '--tx': p.tx,
-          '--ty': p.ty,
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    mouseX.set(e.clientX - rect.left - rect.width / 2);
+    mouseY.set(e.clientY - rect.top - rect.height / 2);
+  };
+  const handleMouseLeave = () => {
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
+  return (
+    <section id="home" className="hero-section">
+
+      {/* Ambient orbs */}
+      {ORBS.map((o, i) => (
+        <div key={i} className="hero-orb" aria-hidden="true" style={{
+          width: o.w, height: o.h,
+          top: o.top, left: o.left,
+          opacity: o.op,
+          background: `radial-gradient(circle, ${o.color}, transparent 70%)`,
+          '--dur': o.dur,
         }} />
       ))}
 
+      {/* Animated grid lines */}
+      <div className="hero-grid-overlay" aria-hidden="true" />
+
       <div className="hero-container">
-        {/* Text Column */}
+
+        {/* ── LEFT: Text ── */}
         <div className="hero-text-col">
 
-          {/* Name */}
+          {/* Status badge */}
+          <motion.div
+            className="hero-status-badge"
+            initial={{ opacity:0, x:-30 }}
+            animate={{ opacity:1, x:0 }}
+            transition={{ duration:0.6, delay:0.1 }}
+          >
+            <span className="hero-status-dot" />
+            Available for Work
+          </motion.div>
+
+          {/* Name — clean, no glitch */}
           <motion.h1
-            className="hero-name glitch-text"
-            data-text={aboutData.name.toUpperCase()}
-            initial={{ opacity:0, y:-50 }}
+            className="hero-name-clean"
+            initial={{ opacity:0, y:40 }}
             animate={{ opacity:1, y:0 }}
             transition={{ duration:0.9, delay:0.2, ease:[0.22,1,0.36,1] }}
           >
-            {aboutData.name.split(' ').map((part, i) => (
-              <span key={i}>
-                {i === 1 ? <span className="accent">{part}</span> : part}
-                {i < aboutData.name.split(' ').length - 1 && <br />}
-              </span>
-            ))}
+            <span className="hero-name-first">{aboutData.name.split(' ')[0]}</span>
+            <br />
+            <span className="hero-name-last">{aboutData.name.split(' ')[1]}</span>
           </motion.h1>
 
-          {/* Role */}
+          {/* Role typing */}
           <motion.div
             className="hero-role-line"
-            initial={{ opacity:0, x:-40 }}
+            initial={{ opacity:0, x:-30 }}
             animate={{ opacity:1, x:0 }}
-            transition={{ duration:0.8, delay:0.5 }}
+            transition={{ duration:0.7, delay:0.45 }}
           >
+            <span className="hero-role-prefix">I build </span>
             <TypeAnimation
               sequence={buildSeq(aboutData.roles)}
               wrapper="span"
-              speed={50}
+              speed={55}
               repeat={Infinity}
-              style={{ fontFamily:'var(--font-mono)' }}
+              className="hero-role-typed"
             />
           </motion.div>
 
           {/* Bio */}
           <motion.p
             className="hero-bio"
-            initial={{ opacity:0 }}
-            animate={{ opacity:1 }}
-            transition={{ duration:1, delay:0.7 }}
+            initial={{ opacity:0, y:20 }}
+            animate={{ opacity:1, y:0 }}
+            transition={{ duration:0.8, delay:0.6 }}
           >
             {aboutData.bio}
           </motion.p>
 
-          {/* Goals */}
-          <motion.p
-            className="hero-goals"
-            initial={{ opacity:0 }}
-            animate={{ opacity:1 }}
-            transition={{ duration:1, delay:0.8 }}
+          {/* Stats row */}
+          <motion.div
+            className="hero-stats"
+            initial={{ opacity:0, y:20 }}
+            animate={{ opacity:1, y:0 }}
+            transition={{ duration:0.7, delay:0.75 }}
           >
-            {aboutData.goals}
-          </motion.p>
+            {[
+              { num:'2+',   label:'Years Coding'   },
+              { num:'5+',   label:'Projects Built' },
+              { num:'MERN', label:'Stack'           },
+            ].map(({ num, label }) => (
+              <div key={label} className="hero-stat-item">
+                <span className="hero-stat-num">{num}</span>
+                <span className="hero-stat-label">{label}</span>
+              </div>
+            ))}
+          </motion.div>
 
-          {/* Buttons */}
+          {/* CTA Buttons */}
           <motion.div
             className="hero-actions"
-            initial={{ opacity:0, y:30, scale:0.85 }}
-            animate={{ opacity:1, y:0, scale:1 }}
-            transition={{ duration:0.6, delay:0.9, type:'spring' }}
+            initial={{ opacity:0, y:30 }}
+            animate={{ opacity:1, y:0 }}
+            transition={{ duration:0.7, delay:0.9, type:'spring' }}
           >
             <motion.a
               href="#contact"
-              className="btn-primary"
+              className="btn-primary hero-cta-main"
               onClick={e => { e.preventDefault(); document.getElementById('contact')?.scrollIntoView({behavior:'smooth'}); }}
-              whileHover={{ scale:1.06 }} whileTap={{ scale:0.96 }}
+              whileHover={{ scale:1.05 }} whileTap={{ scale:0.97 }}
             >
-              Let's Talk
+              Hire Me
             </motion.a>
-            <motion.a href="/resume.pdf" target="_blank" rel="noopener noreferrer"
-              className="btn-secondary" whileHover={{ scale:1.06 }} whileTap={{ scale:0.96 }}
+            <motion.a
+              href="#projects"
+              className="btn-secondary"
+              onClick={e => { e.preventDefault(); document.getElementById('projects')?.scrollIntoView({behavior:'smooth'}); }}
+              whileHover={{ scale:1.05 }} whileTap={{ scale:0.97 }}
             >
-              <FiFileText /> View Resume
-            </motion.a>
-            <motion.a href={waLink} target="_blank" rel="noopener noreferrer"
-              className="btn-secondary" whileHover={{ scale:1.06 }} whileTap={{ scale:0.96 }}
-            >
-              <FaWhatsapp style={{color:'#25d366'}} /> WhatsApp
+              See My Work
             </motion.a>
           </motion.div>
 
-          {/* Socials — stagger */}
-          <div className="hero-socials">
+          {/* Social links */}
+          <motion.div
+            className="hero-socials"
+            initial={{ opacity:0 }}
+            animate={{ opacity:1 }}
+            transition={{ delay:1.1 }}
+          >
             {[
-              { href:aboutData.github,   Icon:FiGithub,   label:'GitHub'   },
-              { href:aboutData.linkedin, Icon:FiLinkedin, label:'LinkedIn' },
-              { href:`mailto:${aboutData.email}`, Icon:FiMail, label:'Email' },
-              { href:waLink, Icon:FaWhatsapp, label:'WhatsApp' },
-            ].filter(({href}) => !!href).map(({href,Icon,label}, i) => (
-              <motion.a key={label} href={href} target="_blank" rel="noopener noreferrer"
-                className="hero-social-link" aria-label={label}
-                initial={{ opacity:0, y:20 }}
+              { href: aboutData.github,              Icon: FiGithub,   label: 'GitHub'    },
+              { href: aboutData.linkedin,            Icon: FiLinkedin, label: 'LinkedIn'  },
+              { href: `mailto:${aboutData.email}`,  Icon: FiMail,     label: 'Email'     },
+              { href: waLink,                        Icon: FaWhatsapp, label: 'WhatsApp'  },
+            ].filter(({ href }) => !!href).map(({ href, Icon, label }, i) => (
+              <motion.a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hero-social-link"
+                aria-label={label}
+                initial={{ opacity:0, y:16 }}
                 animate={{ opacity:1, y:0 }}
-                transition={{ delay: 1 + i * 0.1 }}
-                whileHover={{ y:-4, scale:1.12 }} whileTap={{ scale:0.92 }}
+                transition={{ delay: 1.1 + i * 0.08 }}
+                whileHover={{ y:-4, scale:1.15 }}
+                whileTap={{ scale:0.9 }}
               >
                 <Icon />
               </motion.a>
             ))}
-          </div>
+          </motion.div>
         </div>
 
-        {/* Photo Column */}
+        {/* ── RIGHT: Photo with animated floating frame ── */}
         <motion.div
           className="hero-photo-col"
-          initial={{ opacity:0, scale:0.8, x:60 }}
-          animate={{ opacity:1, scale:1, x:0 }}
+          initial={{ opacity:0, x:80 }}
+          animate={{ opacity:1, x:0 }}
           transition={{ duration:1.1, delay:0.3, ease:[0.22,1,0.36,1] }}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+          style={{ perspective: 1200 }}
         >
-          <div className="hero-photo-wrapper">
-            {/* Professional 3D frame */}
+          <div className="hero-photo-scene">
+
+            {/* Rotating ring decoration */}
+            <div className="hero-ring hero-ring--outer" aria-hidden="true" />
+            <div className="hero-ring hero-ring--inner" aria-hidden="true" />
+
+            {/* Floating corner accents */}
+            <div className="hero-corner hero-corner--tl" aria-hidden="true" />
+            <div className="hero-corner hero-corner--br" aria-hidden="true" />
+
+            {/* The actual photo card — mouse tilt */}
             <motion.div
-              className="hero-photo-frame"
-              whileHover={{ rotateY: 0, rotateX: 0, scale: 1.03 }}
-              transition={{ type:'spring', stiffness:150, damping:20 }}
+              className="hero-photo-card"
+              style={{ rotateX, rotateY }}
+              transition={{ type:'spring', stiffness:120, damping:20 }}
             >
-              {/* Glow ring */}
-              <div className="hero-photo-glow" aria-hidden="true" />
+              {/* Gradient border shimmer */}
+              <div className="hero-photo-shimmer" aria-hidden="true" />
 
               {/* Photo */}
               <img
                 src="/profile/photo.jpg"
                 alt={`${aboutData.name} — ${aboutData.title}`}
+                className="hero-photo-img"
                 loading="eager"
                 onError={e => {
                   e.currentTarget.style.display = 'none';
-                  const frame = e.currentTarget.parentElement;
-                  const s = document.createElement('div');
-                  s.style.cssText = 'width:100%;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(129,140,248,0.1),rgba(196,181,253,0.05));border-radius:20px;';
-                  s.innerHTML = '<span style="font-family:var(--font-display);font-size:7rem;background:linear-gradient(135deg,#818cf8,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">SZ</span>';
-                  frame.appendChild(s);
+                  const card = e.currentTarget.parentElement;
+                  const ph = document.createElement('div');
+                  ph.className = 'hero-photo-placeholder';
+                  ph.innerHTML = '<span>SZ</span>';
+                  card.appendChild(ph);
                 }}
               />
 
-              {/* Name badge bottom */}
-              <div className="hero-photo-namebadge">
-                <span className="hero-photo-namebadge__name">{aboutData.name}</span>
-                <span className="hero-photo-namebadge__role">{aboutData.title}</span>
+              {/* Bottom badge overlay */}
+              <div className="hero-photo-overlay">
+                <span className="hero-photo-overlay__name">{aboutData.name}</span>
+                <span className="hero-photo-overlay__role">{aboutData.title}</span>
               </div>
             </motion.div>
-            <div className="hero-photo-badge" aria-hidden="true">OPEN<br/>TO<br/>WORK</div>
+
+            {/* Floating "Open to Work" pill */}
+            <motion.div
+              className="hero-float-pill"
+              animate={{ y: [0, -10, 0] }}
+              transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+            >
+              <span className="hero-float-pill__dot" />
+              Open to Work
+            </motion.div>
+
+            {/* Floating tech pill */}
+            <motion.div
+              className="hero-float-pill hero-float-pill--tech"
+              animate={{ y: [0, 8, 0] }}
+              transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut', delay: 0.5 }}
+            >
+              ⚛️ MERN Stack
+            </motion.div>
+
           </div>
         </motion.div>
       </div>
 
-      {/* Scroll hint */}
+      {/* Scroll indicator */}
       <motion.div
-        style={{
-          position:'absolute', bottom:28, left:'50%', transform:'translateX(-50%)',
-          display:'flex', flexDirection:'column', alignItems:'center', gap:6,
-          fontFamily:'var(--font-mono)', fontSize:'0.6rem',
-          color:'var(--text-3)', letterSpacing:'2px', textTransform:'uppercase', zIndex:1,
-        }}
-        initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:1.5 }}
+        className="hero-scroll-hint"
+        initial={{ opacity:0 }}
+        animate={{ opacity:1 }}
+        transition={{ delay:1.8 }}
       >
-        Scroll
         <motion.div
-          style={{ width:1, height:32, background:'linear-gradient(180deg,var(--accent),transparent)' }}
-          animate={{ scaleY:[1,0.2,1] }} transition={{ repeat:Infinity, duration:1.8 }}
-        />
+          animate={{ y:[0, 8, 0] }}
+          transition={{ repeat:Infinity, duration:1.6 }}
+        >
+          <FiArrowDown size={18} />
+        </motion.div>
+        <span>Scroll</span>
       </motion.div>
+
     </section>
   );
 };

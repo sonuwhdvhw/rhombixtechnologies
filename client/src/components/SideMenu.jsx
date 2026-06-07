@@ -1,7 +1,6 @@
 /**
- * Navigation — Top navbar always visible + full-screen menu overlay
- * Professional side-panel style with numbered links
- * Hash-based navigation — URL changes to #section on click & on load
+ * Navigation — Clean navbar (logo + theme + hamburger only)
+ * All pages accessible via side panel only
  */
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,12 +25,10 @@ const SideMenu = () => {
   const [active, setActive]     = useState('home');
   const { theme, toggleTheme }  = useTheme();
 
-  // Navbar shadow on scroll + active section tracker
+  // Track scroll for active section
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 20);
-
-      // Find which section is currently in view
       const offsets = NAV_ITEMS.map(item => {
         const el = document.getElementById(item.id);
         if (!el) return { id: item.id, top: Infinity };
@@ -44,7 +41,7 @@ const SideMenu = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // On load — if URL has a hash, scroll to that section
+  // On load — scroll to hash section
   useEffect(() => {
     const hash = window.location.hash?.replace('#', '');
     if (hash) {
@@ -70,7 +67,6 @@ const SideMenu = () => {
   const scrollTo = useCallback((id) => {
     setOpen(false);
     setActive(id);
-    // Update URL hash without page reload
     window.history.pushState(null, '', `#${id}`);
     setTimeout(() => {
       document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -79,30 +75,17 @@ const SideMenu = () => {
 
   return (
     <>
-      {/* ── Top Navbar Bar ──────────────────────────────────── */}
+      {/* ── Top Navbar — sirf logo + controls ── */}
       <nav className={`topnav ${scrolled ? 'topnav--scrolled' : ''}`}>
         <div className="topnav__inner">
+
           {/* Logo */}
           <button className="topnav__logo" onClick={() => scrollTo('home')}>
             <span className="topnav__logo-symbol">&gt;_</span>
             saqlain.dev
           </button>
 
-          {/* Desktop links (hidden below 900px) */}
-          <div className="topnav__links">
-            {NAV_ITEMS.slice(0, 5).map((item) => (
-              <button
-                key={item.id}
-                className={`topnav__link ${active === item.id ? 'topnav__link--active' : ''}`}
-                onClick={() => scrollTo(item.id)}
-              >
-                {item.label}
-              </button>
-            ))}
-            <button className="topnav__link topnav__link--more" onClick={() => setOpen(true)}>
-              More ···
-            </button>
-          </div>
+          {/* NO page name links in navbar — sirf hamburger se jao */}
 
           {/* Right controls */}
           <div className="topnav__controls">
@@ -110,7 +93,6 @@ const SideMenu = () => {
               className="topnav__icon-btn"
               onClick={toggleTheme}
               aria-label="Toggle theme"
-              title="Toggle theme"
             >
               {theme === 'dark' ? <FiSun size={18} /> : <FiMoon size={18} />}
             </button>
@@ -127,7 +109,26 @@ const SideMenu = () => {
         </div>
       </nav>
 
-      {/* ── Full-screen Overlay Menu ────────────────────────── */}
+      {/* ── Floating hamburger button — always visible on scroll ── */}
+      <AnimatePresence>
+        {scrolled && !open && (
+          <motion.button
+            className="float-menu-btn"
+            onClick={() => setOpen(true)}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+            aria-label="Open menu"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <FiMenu size={20} />
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* ── Side Panel Menu ── */}
       <AnimatePresence>
         {open && (
           <>
@@ -162,7 +163,7 @@ const SideMenu = () => {
                 </button>
               </div>
 
-              {/* Nav links */}
+              {/* Nav links — saare sections */}
               <nav className="menu-panel__nav">
                 {NAV_ITEMS.map((item, i) => (
                   <motion.button
