@@ -775,7 +775,7 @@ section {
   font-family: var(--font-display);
   font-size: clamp(4rem, 8.5vw, 7.5rem);
   letter-spacing: 3px;
-  line-height: 0.9;
+  line-height: 1;
   margin-bottom: 24px;
   text-transform: uppercase;
   will-change: opacity, transform;
@@ -785,6 +785,7 @@ section {
   color: #ffffff;
   -webkit-text-fill-color: #ffffff;
   font-weight: 900;
+  line-height: 1;
 }
 [data-theme="light"] .hero-name-first {
   color: #0f172a;
@@ -798,6 +799,7 @@ section {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   font-weight: 900;
+  line-height: 1;
   animation: nameShine 4s linear infinite;
 }
 @keyframes nameShine {
@@ -980,7 +982,7 @@ section {
   width: 300px;
   border-radius: 24px;
   overflow: hidden;
-  background: var(--glass-bg);
+  background: #111;
   box-shadow:
     0 0 0 1.5px rgba(129,140,248,0.5),
     0 0 0 6px rgba(129,140,248,0.08),
@@ -1023,7 +1025,7 @@ section {
 /* Photo image */
 .hero-photo-img {
   width: 100%;
-  aspect-ratio: 3/4;
+  height: 420px;
   object-fit: cover;
   object-position: top center;
   display: block;

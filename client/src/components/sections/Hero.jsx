@@ -82,7 +82,6 @@ const Hero = () => {
             transition={{ duration:0.9, delay:0.2, ease:[0.22,1,0.36,1] }}
           >
             <span className="hero-name-first">{aboutData.name.split(' ')[0]}</span>
-            <br />
             <span className="hero-name-last">{aboutData.name.split(' ')[1]}</span>
           </motion.h1>
 
